@@ -9,6 +9,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please tell us your name!"],
   },
+
   email: {
     type: String,
     required: [true, "Please provide your email!"],
@@ -16,18 +17,36 @@ const userSchema = new mongoose.Schema({
     lowercase: true,
     validate: [validator.isEmail, "Please provide a valid email"],
   },
+
+  phoneNumber: {
+    type: String,
+    required: [true, "Please provide your phone number!"],
+    unique: true,
+
+    validate: {
+      validator: function(el) {
+        // Indian phone number validation
+        return /^[6-9]\d{9}$/.test(el);
+      },
+      message: "Please provide a valid 10-digit Indian phone number!",
+    },
+  },
+
   photo: String,
+
   role: {
     type: String,
-    enum: ["user", "guide", "lead-guide", "admin"],
+    enum: ["user", "admin", "photographer"],
     default: "user",
   },
+
   password: {
     type: String,
     required: [true, "Please provide a password!"],
     minlength: 8,
     select: false,
   },
+
   passwordConfirm: {
     type: String,
     required: [true, "Please confirm your password!"],
@@ -39,9 +58,11 @@ const userSchema = new mongoose.Schema({
       message: "Passwords are not the same!",
     },
   },
+
   passwordChangedAt: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,
+
   active: {
     type: Boolean,
     default: true,
@@ -84,7 +105,7 @@ userSchema.methods.createPasswordResetToken = function() {
     .createHash("sha256")
     .update(resetToken)
     .digest("hex");
-  this.passwordResetToken = Date.now() + 10 * 60 * 1000;
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
 
   return resetToken;
 };

@@ -38,6 +38,7 @@ exports.signup = catchAsync(async (req, res, next) => {
   const newUser = await User.create({
     name: req.body.name,
     email: req.body.email,
+    phoneNumber: req.body.phoneNumber,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
     role: req.body.role,
@@ -64,7 +65,7 @@ exports.login = catchAsync(async (req, res, next) => {
 
 exports.restrictTo = (...roles) => {
   return (req, res, next) => {
-    // roles ['admin', 'lead-guide']. role='user'
+    // roles ['admin']. role='user'
     if (!roles.includes(req.user.role)) {
       return next(
         new AppError("You do not have permission to perform this action", 403),
@@ -167,7 +168,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
     .createHash("sha256")
     .update(req.params.token)
     .digest("hex");
-
+  console.log(hashedToken);
   const user = await User.findOne({
     passwordResetToken: hashedToken,
     passwordResetExpires: { $gt: Date.now() },
