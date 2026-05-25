@@ -20,18 +20,18 @@ router.patch("/updateMe", authController.protect, userController.updateMe);
 router.delete("/deleteMe", authController.protect, userController.deleteMe);
 
 // Protect all routes after this middleware
-router.use(authController.protect);
+router.use(authController.protect, authController.restrictTo("admin"));
 
 // Admin only routes
 router
   .route("/")
-  .get(authController.restrictTo("admin"), userController.getAllUsers)
-  .post(authController.protect, userController.createUser);
+  .get(userController.getAllUsers)
+  .post(userController.createUser);
 
 router
   .route("/:id")
-  .get(authController.restrictTo("admin"), userController.getUser)
-  .patch(authController.restrictTo("admin"), userController.updateUser)
-  .delete(authController.restrictTo("admin"), userController.deleteUser);
+  .get(userController.getUser)
+  .patch(userController.updateUser)
+  .delete(userController.deleteUser);
 
 module.exports = router;
