@@ -10,7 +10,12 @@ const bookingSchema = new mongoose.Schema(
     packageId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Service",
-      default: null,
+      required: [true, "packageId is not defined"],
+    },
+    studioId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Studio",
+      required: [true, "studioId is not defined"],
     },
     eventType: {
       type: String,
