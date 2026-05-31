@@ -7,7 +7,11 @@ const bookingSchema = new mongoose.Schema(
       ref: "User",
       required: [true, "Booking must belong to a user"],
     },
-
+    packageId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Service",
+      default: null,
+    },
     eventType: {
       type: String,
       required: [true, "Please select an event type"],
@@ -42,8 +46,16 @@ const bookingSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   },
 );
+
+bookingSchema.pre(/^find/, function() {
+  this.populate({
+    path: "user packageId",
+  });
+});
 
 bookingSchema.index(
   {
